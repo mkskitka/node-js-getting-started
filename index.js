@@ -1,6 +1,8 @@
 
 var express = require('express');
 var app = express();
+var path = require('path');
+
 
 app.set('port', (process.env.PORT || 5000));
 app.use(express.static(__dirname + '/public'));
@@ -12,7 +14,7 @@ app.set('view engine', 'ejs');
 
 // response.sendFile(_dirname + 'public/home.html')
 app.get('/', function(request, response) {
-  response.sendFile('home.html');
+  response.sendFile(path.join(__dirname + '/public/home.html'));
 });
 
 // app.get('/lab8', function(request, response) {
