@@ -1,9 +1,8 @@
 
 var express = require('express');
 var app = express();
-var path = require('path');
+//var path = require('path');
 var bodyParser = require('body-parser');
-var validator = require('validator');
 var mongoUri = process.env.MONGOLAB_URI || process.env.MONGOHQ_URL || 'mongodb://localhost/database';
 var MongoClient = require('mongodb').MongoClient, format = require('util').format;
 app.set('port', (process.env.PORT || 5000));
@@ -32,7 +31,6 @@ app.set('view engine', 'ejs');
   response.sendFile(path.join(__dirname + '/public/home.html'));
 });
 */
-var pg = require('pg');
 /*
 app.get('/db', function (request, response) {
   pg.connect(process.env.DATABASE_URL, function(err, client, done) {
@@ -54,14 +52,14 @@ app.post('/sendLocation', cors(), function(request, response) {
 	var lng = parseFloat(request.body.lng);
 	var create_at = new date();
 	//food = food.replace(/[^\w\s]/gi, '');
+	if(request.body.login == NULL || request.body.lat == NULL || request.body.lng == NULL){
+			response.send(500);
+	}		
 	var toInsert = {
-		if(request.body.login == undefined || request.body.login == undefined || request.body.login == undefined){
-				response.send(500);
-		}
 		"login": login,
 		"lat": lat,
 		"lng": lng,
-		"created_at": created_at;
+		"created_at": created_at,
 	};
 	db.collection('people', function(error, coll) {
 		coll.insert(toInsert, function(error, saved) {
@@ -69,25 +67,32 @@ app.post('/sendLocation', cors(), function(request, response) {
 				response.send(500);
 			}
 			else {
-				db.collection.find().toArray(function err, cursor)
+				db.collection.find().toArray(function(err, cursor) {
 					if(!err){
 						data.people = cursor;
-						db.collection('landmarks', function error, coll)
+						db.collection('landmarks', function (error, coll) {
 							if(!error){
-								db.collection.find().toArray(function err, cursor)
+								db.collection.find().toArray(function (err, cursor) {
 									if(!err){
 										data.landmarks = cursor;
 										response.send(data);
 									}
 									else{
-										response.send(400);
+										response.send(500);
 									}
 
+								});
 							}
+						}); 
 					}
+				});
 			}
 	    });
 	});
+});
+
+app.listen(app.get('port'), function() {
+  console.log('Node app is running on port', app.get('port'));
 });
 
 
@@ -108,15 +113,12 @@ app.post('/sendLocation', cors(), function(request, response) {
 			}
 		});
 	});
-});
+});*/
 
 
 // app.get('/lab8', function(request, response) {
 //   response.send(lab8());
 // });
 
-//app.listen(app.get('port'), function() {
-//  console.log('Node app is running on port', app.get('port'));
-//});
 
 
