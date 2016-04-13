@@ -45,7 +45,7 @@ app.get('/db', function (request, response) {
 })
 */
 
-app.post('/sendLocation', cors(), function(request, response) {
+app.post('/sendLocation', function(request, response) {
 	var data = {};
 	var login = request.body.login;
 	var lat = parseFloat(request.body.lat);
