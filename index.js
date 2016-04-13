@@ -51,11 +51,11 @@ app.post('/sendLocation', cors(), function(request, response) {
 	var data = {};
 	var login = request.body.login;
 	var lat = parseFloat(request.body.lat);
-	var lng = request.body.lng;
+	var lng = parseFloat(request.body.lng);
 	var create_at = new date();
 	//food = food.replace(/[^\w\s]/gi, '');
 	var toInsert = {
-		if(request.body.login = undefined || request.body.login = undefined || request.body.login = undefined){
+		if(request.body.login == undefined || request.body.login == undefined || request.body.login == undefined){
 				response.send(500);
 		}
 		"login": login,
@@ -63,8 +63,8 @@ app.post('/sendLocation', cors(), function(request, response) {
 		"lng": lng,
 		"created_at": created_at;
 	};
-	var id = db.collection('people', function(error, coll) {
-		var id = coll.insert(toInsert, function(error, saved) {
+	db.collection('people', function(error, coll) {
+		coll.insert(toInsert, function(error, saved) {
 			if (error) {
 				response.send(500);
 			}
