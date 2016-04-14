@@ -49,17 +49,17 @@ app.post('/sendLocation', function(request, response) {
 	var data = {};
 	var login = request.body.login;
 	var lat = parseFloat(request.body.lat);
+	//console.log(request.body.lat);
 	var lng = parseFloat(request.body.lng);
-	var create_at = new date();
-	//food = food.replace(/[^\w\s]/gi, '');
+	//var create_at = new date();
 	if(request.body.login == NULL || request.body.lat == NULL || request.body.lng == NULL){
-			response.send(500);
+			//response.send(500);
 	}		
 	var toInsert = {
 		"login": login,
 		"lat": lat,
 		"lng": lng,
-		"created_at": created_at,
+		//"created_at": created_at,
 	};
 	db.collection('people', function(error, coll) {
 		coll.insert(toInsert, function(error, saved) {
