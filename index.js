@@ -20,11 +20,7 @@ app.use(function(req,res,next){
 	next();
 });
 
-/*app.get("/", function(request, response){
-	console.log("in get function");
-	response.send(200);
 
-});*/
 
 app.post('/sendLocation', function(request, response) {
 	
@@ -104,10 +100,6 @@ app.get('/checkins.json', function(request, response){
 	var url_parts = url.parse(request.url, true);
 	var query = url_parts.query;
 
-	//var login = request.body.login;
-	//console.log("login");
-	//console.log(query);
-	//console.log(query.login);
 	if(query.login == undefined){
 		response.send(data)
 	}
@@ -117,7 +109,7 @@ app.get('/checkins.json', function(request, response){
 				if(cursor){
 					for (var count = 0; count < cursor.length; count++) {
 						if(cursor[count].login == query.login){
-							data[data.length] = query;
+							data[data.length] = cursor[count];
 						}
 					}
 					response.send(data);
@@ -133,13 +125,6 @@ app.get('/checkins.json', function(request, response){
 app.set('port', 5000);
 app.listen(process.env.PORT || 5000, function() { console.log('listening on port 5000')});
 
-
-
-//console.log("now running port 5000")
-
-// app.get('/lab8', function(request, response) {
-//   response.send(lab8());
-// });
 
 
 
