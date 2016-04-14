@@ -88,13 +88,13 @@ app.set('port', 5000);
 app.listen(process.env.PORT || 5000, function() { console.log('listening on port 5000')});
 
 
-/*app.get('/', function(request, response) {
+app.get('/', function(request, response) {
 	response.set('Content-Type', 'text/html');
 	var indexPage = '';
 	db.collection('people', function(er, collection) {
 		if(!err){
 		collection.find().toArray(function(err, cursor) {
-
+			if(cursor){
 				indexPage += "<!DOCTYPE HTML><html><head><title>Checkins</title></head><body><h1>Checkins</h1>";
 				for (var count = 0; count < cursor.length; count++) {
 					if(response.body.login == cursor[count].people.login){
@@ -103,14 +103,17 @@ app.listen(process.env.PORT || 5000, function() { console.log('listening on port
 				}
 				indexPage += "</body></html>"
 				response.send(indexPage);
-			} else {
-				response.send('<!DOCTYPE HTML><html><head><title>Something is wrong with your data</title></head><body><h1>Whoops, something went terribly wrong!</h1></body></html>');
 			}
+			else{
+				response.send('<!DOCTYPE HTML><html><head><title>Something is wrong with your data</title></head><body><h1>Whoops, something went terribly wrong!</h1></body></html>');
+			}	
+		} else {
+			response.send('<!DOCTYPE HTML><html><head><title>Something is wrong with your data</title></head><body><h1>Whoops, something went terribly wrong!</h1></body></html>');
+		}
 		});
 	});
 });
 
-*/
 //console.log("now running port 5000")
 
 // app.get('/lab8', function(request, response) {
