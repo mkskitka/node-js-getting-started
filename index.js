@@ -1,61 +1,49 @@
 
 var express = require('express');
-var app = express();
-
 //var path = require('path');
 var bodyParser = require('body-parser');
-app.use(bodyParser.urlencoded({ extended: true })); 
+var app = express();
 app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({ extended: true })); 
 
-var mongoUri = process.env.MONGOLAB_URI || process.env.MONGOHQ_URL || 'mongodb://localhost/database';
+
+var mongoUri = process.env.MONGOLAB_URI || process.env.MONGOHQ_URL || 'mongodb://heroku_hrlt9p2b:ciu3131gcbehkjlr1cuiatdd1d@ds023550.mlab.com:23550/heroku_hrlt9p2b';
+
 var MongoClient = require('mongodb').MongoClient, format = require('util').format;
 var db = MongoClient.connect(mongoUri, function(error, databaseConnection) {
 	db = databaseConnection;
 });
 
 
-
+console.log("beginning of file");
 
 app.use(function(req,res,next){
 	res.header("Access-Control-Allow-Origin","*");
 	res.header("Access-Control-Allow-Headers","Origin, X-Requested-With, Content-Type, Accept");
 	next();
 });
-app.listen(5000, function() { console.log('listening on port 5000')});
 
-// views is directory for all template files
-//app.set('views', __dirname + '/views');
-//app.set('view engine', 'ejs');
+console.log("hello");
 
+app.get("/", function(request, response){
+	console.log("in get function");
+	response.send(200);
 
-// response.sendFile(_dirname + 'public/home.html')
-/*app.get('/', function(request, response) {
-  response.sendFile(path.join(__dirname + '/public/home.html'));
 });
-*/
-/*
-app.get('/db', function (request, response) {
-  pg.connect(process.env.DATABASE_URL, function(err, client, done) {
-    client.query('SELECT * FROM test_table', function(err, result) {
-      done();
-      if (err)
-       { console.error(err); response.send("Error " + err); }
-      else
-       { response.render('pages/db', {results: result.rows} ); }
-    });
-  });
-})
-*/
-app.use(express.static(__dirname + '/public'));
 
+console.log("right before fungion");
 app.post('/sendLocation', function(request, response) {
+	
+	console.log("in the function");
+
+
 	var data = {};
 	var login = request.body.login;
 	var lat = parseFloat(request.body.lat);
 	var lng = parseFloat(request.body.lng);
-	var create_at = new Date();
+	var created_at = new Date();
 	if(request.body.login == undefined || request.body.lat == undefined || request.body.lng == undefined){
-			//response.send(500);
+			response.send(500);
 	}		
 	var toInsert = {
 		"login": login,
@@ -66,21 +54,23 @@ app.post('/sendLocation', function(request, response) {
 	db.collection('people', function(error, coll) {
 		coll.insert(toInsert, function(error, saved) {
 			if (error) {
-				response.send("error 1");
+				response.send(500);
 			}
 			else {
-				db.collection.find().toArray(function(err, cursor) {
+				coll.find().toArray(function(err, cursor) {
 					if(!err){
 						data.people = cursor;
 						db.collection('landmarks', function (error, coll) {
 							if(!error){
-								db.collection.find().toArray(function (err, cursor) {
+								coll.find().toArray(function (err, cursor) {
 									if(!err){
+										console.log("about to send data");
 										data.landmarks = cursor;
+										//console.log(data);
 										response.send(data);
 									}
 									else{
-										response.send("error 3");
+										response.send(500);
 									}
 
 								});
@@ -94,6 +84,8 @@ app.post('/sendLocation', function(request, response) {
 });
 
 
+app.set('port', 5000);
+app.listen(process.env.PORT || 5000, function() { console.log('listening on port 5000')});
 
 
 /*app.get('/', function(request, response) {
@@ -119,7 +111,6 @@ app.post('/sendLocation', function(request, response) {
 });
 
 */
-//app.set('port', (process.env.PORT || 5000));
 //console.log("now running port 5000")
 
 // app.get('/lab8', function(request, response) {
