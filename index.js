@@ -51,7 +51,7 @@ app.post('/sendLocation', function(request, response) {
 	var lat = parseFloat(request.body.lat);
 	//console.log(request.body.lat);
 	var lng = parseFloat(request.body.lng);
-	//var create_at = new date();
+	var create_at = new Date();
 	if(request.body.login == NULL || request.body.lat == NULL || request.body.lng == NULL){
 			//response.send(500);
 	}		
@@ -59,7 +59,7 @@ app.post('/sendLocation', function(request, response) {
 		"login": login,
 		"lat": lat,
 		"lng": lng,
-		//"created_at": created_at,
+		"created_at": created_at,
 	};
 	db.collection('people', function(error, coll) {
 		coll.insert(toInsert, function(error, saved) {
