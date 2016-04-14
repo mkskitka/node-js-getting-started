@@ -51,9 +51,7 @@ app.post('/sendLocation', function(request, response) {
 							if(!error){
 								coll.find().toArray(function (err, cursor) {
 									if(!err){
-										console.log("about to send data");
 										data.landmarks = cursor;
-										//console.log(data);
 										response.send(data);
 									}
 									else{
