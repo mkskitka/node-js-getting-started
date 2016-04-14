@@ -14,16 +14,11 @@ var db = MongoClient.connect(mongoUri, function(error, databaseConnection) {
 	db = databaseConnection;
 });
 
-
-console.log("beginning of file");
-
 app.use(function(req,res,next){
 	res.header("Access-Control-Allow-Origin","*");
 	res.header("Access-Control-Allow-Headers","Origin, X-Requested-With, Content-Type, Accept");
 	next();
 });
-
-console.log("hello");
 
 /*app.get("/", function(request, response){
 	console.log("in get function");
@@ -31,12 +26,8 @@ console.log("hello");
 
 });*/
 
-console.log("right before fungion");
 app.post('/sendLocation', function(request, response) {
 	
-	console.log("in the function");
-
-
 	var data = {};
 	var login = request.body.login;
 	var lat = parseFloat(request.body.lat);
@@ -86,9 +77,9 @@ app.post('/sendLocation', function(request, response) {
 app.get('/', function(request, response) {
 	response.set('Content-Type', 'text/html');
 	var indexPage = '';
-	db.collection('people', function(err, collection) {
+	db.collection('people', function(err, coll) {
 		if(!err){
-			collection.find().toArray(function(err, cursor) {
+			coll.find().toArray(function(err, cursor) { //fixSort
 				if(cursor){
 					indexPage += "<!DOCTYPE HTML><html><head><title>Checkins</title></head><body><h1>Checkins</h1>";
 					for (var count = 0; count < cursor.length; count++) {
@@ -106,6 +97,38 @@ app.get('/', function(request, response) {
 	});
 });
 
+app.get('/checkins.json', function(request, response){
+	//response.set('Content-Type', )
+	var data = new Array();
+	var url = require('url');
+	var url_parts = url.parse(request.url, true);
+	var query = url_parts.query;
+
+	//var login = request.body.login;
+	//console.log("login");
+	//console.log(query);
+	//console.log(query.login);
+	if(query.login == undefined){
+		response.send(data)
+	}
+	db.collection('people', function(error, coll){
+		if(!error){
+			coll.find().toArray(function(err, cursor){
+				if(cursor){
+					for (var count = 0; count < cursor.length; count++) {
+						if(cursor[count].login == query.login){
+							data[data.length] = query;
+						}
+					}
+					response.send(data);
+				}
+				else{
+					response.send(data);
+				}
+			});
+		}	
+	});
+});
 
 app.set('port', 5000);
 app.listen(process.env.PORT || 5000, function() { console.log('listening on port 5000')});
