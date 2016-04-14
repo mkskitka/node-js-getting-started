@@ -1,29 +1,31 @@
 
 var express = require('express');
 var app = express();
+
 //var path = require('path');
 var bodyParser = require('body-parser');
+app.use(bodyParser.urlencoded({ extended: true })); 
+app.use(bodyParser.json());
+
 var mongoUri = process.env.MONGOLAB_URI || process.env.MONGOHQ_URL || 'mongodb://localhost/database';
 var MongoClient = require('mongodb').MongoClient, format = require('util').format;
-app.set('port', (process.env.PORT || 5000));
 var db = MongoClient.connect(mongoUri, function(error, databaseConnection) {
 	db = databaseConnection;
 });
 
 
-app.use(express.static(__dirname + '/public'));
-app.use(bodyParser.urlencoded({ extended: true })); 
-app.use(bodyParser.json());
+
+
 app.use(function(req,res,next){
 	res.header("Access-Control-Allow-Origin","*");
 	res.header("Access-Control-Allow-Headers","Origin, X-Requested-With, Content-Type, Accept");
 	next();
 });
-// app.listen(5000, function() { console.log('listening')});
+app.listen(5000, function() { console.log('listening on port 5000')});
 
 // views is directory for all template files
-app.set('views', __dirname + '/views');
-app.set('view engine', 'ejs');
+//app.set('views', __dirname + '/views');
+//app.set('view engine', 'ejs');
 
 
 // response.sendFile(_dirname + 'public/home.html')
@@ -44,15 +46,15 @@ app.get('/db', function (request, response) {
   });
 })
 */
+app.use(express.static(__dirname + '/public'));
 
 app.post('/sendLocation', function(request, response) {
 	var data = {};
 	var login = request.body.login;
 	var lat = parseFloat(request.body.lat);
-	//console.log(request.body.lat);
 	var lng = parseFloat(request.body.lng);
 	var create_at = new Date();
-	if(request.body.login == NULL || request.body.lat == NULL || request.body.lng == NULL){
+	if(request.body.login == undefined || request.body.lat == undefined || request.body.lng == undefined){
 			//response.send(500);
 	}		
 	var toInsert = {
@@ -64,7 +66,7 @@ app.post('/sendLocation', function(request, response) {
 	db.collection('people', function(error, coll) {
 		coll.insert(toInsert, function(error, saved) {
 			if (error) {
-				response.send(500);
+				response.send("error 1");
 			}
 			else {
 				db.collection.find().toArray(function(err, cursor) {
@@ -78,7 +80,7 @@ app.post('/sendLocation', function(request, response) {
 										response.send(data);
 									}
 									else{
-										response.send(500);
+										response.send("error 3");
 									}
 
 								});
@@ -86,35 +88,39 @@ app.post('/sendLocation', function(request, response) {
 						}); 
 					}
 				});
-			}
+			} 
 	    });
 	});
 });
 
-app.listen(app.get('port'), function() {
-  console.log('Node app is running on port', app.get('port'));
-});
+
 
 
 /*app.get('/', function(request, response) {
 	response.set('Content-Type', 'text/html');
 	var indexPage = '';
-	db.collection('fooditems', function(er, collection) {
+	db.collection('people', function(er, collection) {
+		if(!err){
 		collection.find().toArray(function(err, cursor) {
-			if (!err) {
-				indexPage += "<!DOCTYPE HTML><html><head><title>What Did You Feed Me?</title></head><body><h1>What Did You Feed Me?</h1>";
+
+				indexPage += "<!DOCTYPE HTML><html><head><title>Checkins</title></head><body><h1>Checkins</h1>";
 				for (var count = 0; count < cursor.length; count++) {
-					indexPage += "<p>You fed me " + cursor[count].food + "!</p>";
+					if(response.body.login == cursor[count].people.login){
+						indexPage += "<p> " + cursor[count].people.created_at + " " + cursor[count].people.lat + " " cursor[count].people.lng + " " + cursor[count].people.login + "!</p>";
+					}
 				}
 				indexPage += "</body></html>"
 				response.send(indexPage);
 			} else {
-				response.send('<!DOCTYPE HTML><html><head><title>What Did You Feed Me?</title></head><body><h1>Whoops, something went terribly wrong!</h1></body></html>');
+				response.send('<!DOCTYPE HTML><html><head><title>Something is wrong with your data</title></head><body><h1>Whoops, something went terribly wrong!</h1></body></html>');
 			}
 		});
 	});
-});*/
+});
 
+*/
+//app.set('port', (process.env.PORT || 5000));
+//console.log("now running port 5000")
 
 // app.get('/lab8', function(request, response) {
 //   response.send(lab8());
