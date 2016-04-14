@@ -25,11 +25,11 @@ app.use(function(req,res,next){
 
 console.log("hello");
 
-app.get("/", function(request, response){
+/*app.get("/", function(request, response){
 	console.log("in get function");
 	response.send(200);
 
-});
+});*/
 
 console.log("right before fungion");
 app.post('/sendLocation', function(request, response) {
@@ -83,36 +83,34 @@ app.post('/sendLocation', function(request, response) {
 	});
 });
 
+app.get('/', function(request, response) {
+	response.set('Content-Type', 'text/html');
+	var indexPage = '';
+	db.collection('people', function(err, collection) {
+		if(!err){
+			collection.find().toArray(function(err, cursor) {
+				if(cursor){
+					indexPage += "<!DOCTYPE HTML><html><head><title>Checkins</title></head><body><h1>Checkins</h1>";
+					for (var count = 0; count < cursor.length; count++) {
+							indexPage += "<p> " + cursor[count].login + " checked in at " + cursor[count].lat + ", " + cursor[count].lng + " on " +  cursor[count].created_at  + "</p>";
+						
+					}
+					indexPage += "</body></html>"
+					response.send(indexPage);
+				}
+				else{
+					response.send('<!DOCTYPE HTML><html><head><title>Something is wrong with your data</title></head><body><h1>Whoops, something went terribly wrong!</h1></body></html>');
+				}	
+			});
+		}
+	});
+});
+
 
 app.set('port', 5000);
 app.listen(process.env.PORT || 5000, function() { console.log('listening on port 5000')});
 
 
-app.get('/', function(request, response) {
-	response.set('Content-Type', 'text/html');
-	var indexPage = '';
-	db.collection('people', function(er, collection) {
-		if(!err){
-		collection.find().toArray(function(err, cursor) {
-			if(cursor){
-				indexPage += "<!DOCTYPE HTML><html><head><title>Checkins</title></head><body><h1>Checkins</h1>";
-				for (var count = 0; count < cursor.length; count++) {
-					if(response.body.login == cursor[count].people.login){
-						indexPage += "<p> " + cursor[count].people.created_at + " " + cursor[count].people.lat + " " cursor[count].people.lng + " " + cursor[count].people.login + "!</p>";
-					}
-				}
-				indexPage += "</body></html>"
-				response.send(indexPage);
-			}
-			else{
-				response.send('<!DOCTYPE HTML><html><head><title>Something is wrong with your data</title></head><body><h1>Whoops, something went terribly wrong!</h1></body></html>');
-			}	
-		} else {
-			response.send('<!DOCTYPE HTML><html><head><title>Something is wrong with your data</title></head><body><h1>Whoops, something went terribly wrong!</h1></body></html>');
-		}
-		});
-	});
-});
 
 //console.log("now running port 5000")
 
